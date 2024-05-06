@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-file-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-file-server
+  template:
+    metadata:
+      labels:
+        app: nginx-file-server
+    spec:
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: faasit-code-volume-claim
+      containers:
+      - name: nginx
+        image: docker.io/xdydy/faasit-file-server:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data/uploads
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-file-server
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: nginx-file-server

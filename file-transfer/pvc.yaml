@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: faasit-code-volume
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  hostPath:
+    path: /home/dydy/faasit-docker/file-transfer/uploads
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: faasit-code-volume-claim
+spec:
+  resources:
+    requests:
+      storage: 512Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
