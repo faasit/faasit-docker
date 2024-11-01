@@ -42,7 +42,7 @@ def check_and_load_code():
         
 
 @app.route('/', methods=['POST', 'GET'])
-async def local_invoke():
+def local_invoke():
     try :
         req = request.get_json()
         event = req['event']
@@ -52,7 +52,7 @@ async def local_invoke():
         # 导入用户代码
         check_and_load_code()
         code = importlib.import_module(codeName)
-        result = await code.handler(event,metadata)
+        result = code.handler(event,metadata)
         logger.info(f"[OUTPUT] {result}")
 
         resp = jsonify(result)
