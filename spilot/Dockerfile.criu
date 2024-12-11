@@ -1,0 +1,28 @@
+FROM python:3.10 AS criu-base
+
+ENV FAASIT_PROVIDER=pku
+
+COPY debian.list /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y cmake criu && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+WORKDIR /mitosis
+
+RUN git clone --branch criu-test https://github.com/ProjectMitosisOS/mitosis-core.git
+RUN cd mitosis-core/mitosis-user-libs/mitosis-lean-container/lib \
+    && mkdir build && cd build \
+    && cmake .. \
+    && make
+
+ENV ROOTFS_ABS_PATH=/mitosis/.base
+ENV CONTAINER_NAME=my_container
+
+RUN echo "cd /mitosis/mitosis-core/exp/criu-micro && bash run_benchmark.sh 100 my_container \${ROOTFS_ABS_PATH} 2>/dev/null" > /mitosis/run.sh \
+    && chmod +x /mitosis/run.sh
+    
+# RUN echo "cd mitosis-core/exp/criu-micro && bash host_dump.sh" > /mitosis/checkpoint.sh \
+#     && chmod +x /mitosis/checkpoint.sh
+COPY .base /mitosis/.base
+
+RUN chmod 755 /mitosis/.base
+RUN chmod 666 /mitosis/.base/dev/null
