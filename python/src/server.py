@@ -1,3 +1,4 @@
+import importlib.util
 from flask import Flask,request,jsonify,make_response
 import requests
 
@@ -46,13 +47,19 @@ def local_invoke():
     try :
         req = request.get_json()
         event = req['event']
-        metadata = req['metadata']
+        metadata = req.get('metadata',None)
         logger.info(f"[INPUT] {req}")
 
         # 导入用户代码
         check_and_load_code()
-        code = importlib.import_module(codeName)
-        result = code.handler(event,metadata)
+        spec = importlib.util.spec_from_file_location('handler', f'/{codeDir}/{codeName}.py')
+        if spec is None:
+            logger.error(f"[ERROR] Can't find code file {codeName}.py")
+            return make_response(jsonify({'error': f"Can't find code file {codeName}.py"}), 500)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        code = getattr(module, 'handler')
+        result = code(event,metadata)
         logger.info(f"[OUTPUT] {result}")
 
         resp = jsonify(result)
