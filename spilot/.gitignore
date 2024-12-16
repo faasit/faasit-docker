@@ -1,1 +1,4 @@
 .base
+mitosis-core
+criu
+*.tgz
