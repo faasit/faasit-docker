@@ -30,7 +30,7 @@ libdb5.3-dev wget
 
 COPY Python-3.10.12.tgz .
 
-RUN tar -zxvf Python-3.10.12.tgz && rm Python-3.10.12.tgz && cd Python-3.10.12 && ./configure --enable-optimizations && make -j$(nproc) && make install
+RUN tar -zxvf Python-3.10.12.tgz && rm Python-3.10.12.tgz && cd Python-3.10.12 && ./configure --enable-optimizations && make -j$(nproc) && make install && cd .. && rm -rf Python-3.10.12
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt -i https://mirror.sjtu.edu.cn/pypi/web/simple
