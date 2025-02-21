@@ -1,4 +1,10 @@
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+
 FROM faasit-spilot-base AS node-env
+
+ENV http_proxy=$HTTP_PROXY
+ENV https_proxy=$HTTPS_PROXY
 
 # ENV NODE_VERSION=v16.20.2
 
