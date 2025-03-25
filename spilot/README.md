@@ -13,3 +13,9 @@ docker build -t spilot-python-env -f Dockerfile.python .
 docker build -t faasit-spilot-base -f Dockerfile.faasit .
 docker build -t faasit-spilot:0.4 .
 ```
+
+### 0.6
+
+```bash
+git clone --branch criu_develop --depth 1 https://github.com/greenEggLy/mitosis-core.git
+```
