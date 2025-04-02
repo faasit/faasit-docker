@@ -19,6 +19,8 @@ function getDate() {
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({extended: true}));
+process.env.FAASIT_FUNC_NAME = "__executor"
+process.env.FAASIT_WORKFLOW_FUNC_NAME = "__executor"
 
 app.post("/", async (req,res) => {
     var runTimeDate = getDate();
@@ -43,15 +45,26 @@ app.post("/", async (req,res) => {
     //         console.error(`Error parsing JSON: ${err.message}`)
     //     }
     // })
-    const functionInvoke = require(`/${codeDir}/${codeName}`)
-    const event = req.body;
+    const code = await import(`/${codeDir}/${codeName}.js`)
+    // const event = req.body;
     const context = null;
-    const result = await functionInvoke.handler(event,context);
+    const handler = code.default.handler
+    const result = await handler({});
     res.json(result);
 
     runTimeDate = getDate();
     console.log(`[${runTimeDate}]: Function End`)
 })
+
+app.get("/health", (req,res) => {
+    var runTimeDate = getDate();
+    console.log(`[${runTimeDate}]: Health Check`)
+    res.json({
+        status: "ok",
+        message: "Server is running"
+    })
+}
+)
 
 const port = 9000
 
