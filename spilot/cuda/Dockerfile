@@ -10,8 +10,8 @@ RUN apt install python3-pip -y
 
 RUN pip3 install faasit-runtime[pku] --index-url http://${IP}:12121 --trusted-host ${IP} --extra-index-url https://mirrors.aliyun.com/pypi/simple/
 
-RUN pip3 install redis psutil torch==2.5.1  torchvision==0.20.1 torchaudio==2.5.1  --index-url http://${IP}:12121 --trusted-host ${IP} --extra-index-url https://mirrors.aliyun.com/pypi/simple/
-
+RUN pip3 install redis psutil 
+RUN pip3 install torch==2.5.1  torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124
 # RUN ln -s /usr/local/bin/python3 /usr/local/bin/python && ln -s /usr/local/bin/pip3 /usr/local/bin/pip
 
 ENV FAASIT_PROVIDER=pku
